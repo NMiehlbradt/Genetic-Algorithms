@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Sequence
+from typing import Sequence, Dict, Tuple
 from pygame import Rect
 from pgzero.screen import Screen
 
@@ -22,7 +22,18 @@ class Network:
 
         return self.layers[-1]
 
-    def calculate_node_positions(self) -> dict[tuple[int, int], tuple[float, float]]:
+    def mutate(self, mutation_rate):
+        for layer in self.layers:
+            layer_shape = layer.shape
+            modifications = (np.random.uniform(size=layer_shape) < mutation_rate) * np.random.normal(size=layer_shape)
+            layer += modifications
+
+        for bias in self.biases:
+            bias_shape = bias.shape
+            modifications = (np.random.uniform(size=bias_shape) < mutation_rate) * np.random.normal(size=bias_shape)
+            bias += modifications
+
+    def calculate_node_positions(self) -> Dict[Tuple[int, int], Tuple[float, float]]:
         node_positions = {}
 
         x_spacing = 1 / len(self.layer_data)
@@ -45,7 +56,7 @@ class Network:
                 for c in range(cols):
                     s_x, s_y = self.node_positions[(i, c)]
                     e_x, e_y = self.node_positions[(i + 1, r)]
-                    colour_mod = min(255, abs(weights[r, c]) * 255)
+                    colour_mod = min(255, abs(weights[r, c])/2 * 255)
                     c = (255, colour_mod, colour_mod) if weights[r, c] < 0 else (colour_mod, 255, colour_mod)
                     screen.draw.line((x + s_x * w, y + s_y * h), (x + e_x * w, y + e_y * h), c)
 

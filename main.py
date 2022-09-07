@@ -1,5 +1,6 @@
 import numpy as np
 
+from flappy_bird import FlappyGame
 from network import Network
 import pgzrun
 
@@ -8,23 +9,20 @@ TITLE = 'Neural Networks'
 WIDTH = 1080
 HEIGHT = 720
 
-network = Network([2, 20, 1])
-
-mouse_pos = (0, 0)
+game = FlappyGame(WIDTH, HEIGHT)
 
 
-def on_mouse_move(pos):
-    global mouse_pos
-    mouse_pos = (pos[0] / WIDTH, pos[1] / HEIGHT)
+def on_key_down(key):
+    game.birds[0].jumping = True
 
 
 def update():
-    network.simulate(mouse_pos)
+    game.update()
 
 
 def draw():
-    screen.fill((0, 0, 0))
-    network.draw(screen, 10, 10, 1060, 700)
+    screen.fill((255, 255, 255))
+    game.draw(screen)
 
 
 pgzrun.go()
