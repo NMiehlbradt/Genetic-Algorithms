@@ -33,6 +33,8 @@ class Network:
             modifications = (np.random.uniform(size=bias_shape) < mutation_rate) * np.random.normal(size=bias_shape)
             bias += modifications
 
+        return self
+
     def calculate_node_positions(self) -> Dict[Tuple[int, int], Tuple[float, float]]:
         node_positions = {}
 
@@ -63,7 +65,7 @@ class Network:
         for i, n_nodes in enumerate(self.layer_data):
             for n in range(n_nodes):
                 n_x, n_y = self.node_positions[(i, n)]
-                c = self.layers[i][n] * 255
+                c = min(max(self.layers[i][n] * 255, 0), 255)
                 screen.draw.filled_circle((x + n_x * w, y + n_y * h), node_radius, (c, c, c))
                 screen.draw.circle((x + n_x * w, y + n_y * h), node_radius, (0, 0, 0))
 
@@ -71,3 +73,24 @@ class Network:
         for i in range(len(self.layer_data)-1):
             print(self.weights[i])
             print(self.biases[i])
+
+
+def crossover(network_a: Network, network_b: Network, a_bias=0.5):
+    if network_a.layer_data != network_b.layer_data:
+        raise RuntimeError(f'Incompatible network topology: {network_a.layer_data} vs {network_b.layer_data}')
+
+    child = Network(network_a.layer_data)
+
+    for i, (a, b) in enumerate(zip(network_a.weights, network_b.weights)):
+        weights = b.copy()
+        mask = np.random.uniform(size=a.shape) < a_bias
+        weights[mask] = a[mask]
+        child.weights[i] = weights
+
+    for i, (a, b) in enumerate(zip(network_a.biases, network_b.biases)):
+        biases = b.copy()
+        mask = np.random.uniform(size=a.shape) < a_bias
+        biases[mask] = a[mask]
+        child.biases[i] = biases
+
+    return child

@@ -1,7 +1,7 @@
 import numpy as np
 import pgzero.keyboard
 
-from network import Network
+from network import *
 # from pgzero import keyboard
 import pgzrun
 
