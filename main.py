@@ -1,8 +1,6 @@
-import numpy as np
-
-from flappy_bird import FlappyGame
+from flappybird.flappy_bird import FlappyGame
 import pgzrun
-from pool import *
+from network.pool import *
 
 TITLE = 'Neural Networks'
 

@@ -1,9 +1,8 @@
 import pygame.surfarray
 import tqdm
 
-import raymarch
+from raymarching import raymarch
 from pgzero.screen import Screen
-from pygame import Surface
 from abc import ABC, abstractmethod
 import numpy as np
 import pickle

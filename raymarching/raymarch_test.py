@@ -1,5 +1,4 @@
 import pgzrun
-from pygame import Rect
 import numpy as np
 import raymarch
 
