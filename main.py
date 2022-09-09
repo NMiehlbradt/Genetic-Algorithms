@@ -7,9 +7,11 @@ TITLE = 'Neural Networks'
 WIDTH = 1080
 HEIGHT = 720
 
-pool = Pool(200, [5, 5, 1],
+pool = Pool(population=200,
+            topology=[5, 5, 1],
             crossover_selector=weighted_selector,
-            mutation_rate=0.01, carry_over=1)
+            mutation_rate=0.01,
+            carry_over=1)
 
 game = FlappyGame(WIDTH, HEIGHT, n_players=pool.population)
 

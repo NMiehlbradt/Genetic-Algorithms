@@ -1,8 +1,10 @@
+import pickle
 
 from network.network import *
 import numpy as np
 import pandas as pd
 import random
+from os.path import join
 
 
 def elite_selector(fitnesses):
@@ -27,7 +29,8 @@ class Pool:
     def __init__(self, population, topology,
                  crossover_selector=elite_selector,
                  mutation_rate=0.1,
-                 carry_over=10):
+                 carry_over=10,
+                 save_dir=None):
         self.population = population
 
         self.candidates = [Network(topology) for _ in range(population)]
@@ -37,8 +40,14 @@ class Pool:
         self.crossover_selector = crossover_selector
         self.mutation_rate = mutation_rate
         self.carry_over = carry_over
+        self.save_dir = save_dir
 
     def next_generation(self):
+
+        if self.save_dir is not None:
+            with open(join(self.save_dir, f'gen_{self.generation}'), 'wb+') as f:
+                pickle.dump(self, f)
+
         scores = pd.DataFrame(self.fitnesses)
         print(f'--- Generation {self.generation} ---')
         print(scores.describe())
@@ -51,7 +60,6 @@ class Pool:
             return crossover(old_candidates[a_ix], old_candidates[b_ix], ratio)
 
         self.candidates = [do_crossover().mutate(self.mutation_rate) for _ in range(self.population - self.carry_over)]
-        # self.candidates.append(best_network)
         for i in np.argsort(self.fitnesses)[:self.carry_over:-1]:
             self.candidates.append(old_candidates[i])
 
