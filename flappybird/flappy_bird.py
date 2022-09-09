@@ -100,7 +100,17 @@ class FlappyGame:
         self.pipes = list(filter(lambda p: p.x > -FlappyGame.pipe_width, self.pipes))
         if len(self.pipes) == 0 or self.pipes[-1].x < self.width - FlappyGame.pipe_spacing:
             h = random.randint(FlappyGame.pipe_opening, self.height)
-            self.pipes.append(Pipe(self.width, h, FlappyGame.pipe_width, FlappyGame.pipe_opening, self.height))
+
+            def f(x):
+                x2 = min(max(x, 0), 1)
+                return -2 * x2 ** 3 + 3 * x2 ** 2
+
+            def g(x, s, e, l, u):
+                return (u - l) * f((x - s) / (e - s)) + l
+
+            opening = g(self.time, 1000, 5000, FlappyGame.pipe_opening, FlappyGame.pipe_opening / 3)
+
+            self.pipes.append(Pipe(self.width, h, FlappyGame.pipe_width, opening, self.height))
 
         for bird in self.birds:
             bird.update()
